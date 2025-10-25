@@ -98,6 +98,56 @@ main.container-fluid {
     border-color: rgba(0, 0, 0, 0.1);
 }
 
+.element-card.selected {
+    border-width: 1.5px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+}
+
+.element-card.selected.alkali-metal {
+    border-color: var(--alkali-metal-text);
+}
+
+.element-card.selected.alkaline-earth-metal {
+    border-color: var(--alkaline-earth-metal-text);
+}
+
+.element-card.selected.transition-metal {
+    border-color: var(--transition-metal-text);
+}
+
+.element-card.selected.post-transition-metal {
+    border-color: var(--post-transition-metal-text);
+}
+
+.element-card.selected.metalloid {
+    border-color: var(--metalloid-text);
+}
+
+.element-card.selected.reactive-nonmetal {
+    border-color: var(--reactive-nonmetal-text);
+}
+
+.element-card.selected.noble-gas {
+    border-color: var(--noble-gas-text);
+}
+
+.element-card.selected.lanthanide {
+    border-color: var(--lanthanide-text);
+}
+
+.element-card.selected.actinide {
+    border-color: var(--actinide-text);
+}
+
+.element-card.selected.unknown {
+    border-color: var(--unknown-text);
+}
+
+.element-card.selected:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
 .element-number {
     font-size: 0.65rem;
     opacity: 0.7;

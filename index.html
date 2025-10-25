@@ -52,7 +52,8 @@
                 <div class="periodic-table-grid">
                     <template x-for="element in elements" :key="element.symbol">
                         <div class="element-card" :style="`grid-column: ${element.x}; grid-row: ${element.y};`"
-                            :class="element.categoryClass" @click="selectElement(element.symbol)">
+                            :class="[element.categoryClass, selectedElement?.symbol === element.symbol ? 'selected' : '']"
+                            @click="selectElement(element.symbol)">
                             <div class="element-number" x-text="element.number"></div>
                             <div class="element-symbol" x-text="element.symbol"></div>
                             <div class="element-name" x-text="element.name"></div>
@@ -261,10 +262,13 @@
                             <form @submit.prevent="sendChatMessage()" class="mt-auto">
                                 <div class="input-group">
                                     <input type="text" class="form-control" placeholder="Hỏi AI về nguyên tố này..."
-                                        x-model="userMessage" @keydown.enter.prevent="sendChatMessage()" :disabled="isLoading">
+                                        x-model="userMessage" @keydown.enter.prevent="sendChatMessage()"
+                                        :disabled="isLoading">
                                     <button @click.prevent="toggleSpeechRecognition()" class="btn btn-outline-secondary"
-                                        type="button" :disabled="isLoading" :title="isListening ? 'Dừng ghi âm' : 'Bắt đầu ghi âm'">
-                                        <i class="bi" :class="isListening ? 'bi-mic-mute-fill text-danger' : 'bi-mic-fill'"></i>
+                                        type="button" :disabled="isLoading"
+                                        :title="isListening ? 'Dừng ghi âm' : 'Bắt đầu ghi âm'">
+                                        <i class="bi"
+                                            :class="isListening ? 'bi-mic-mute-fill text-danger' : 'bi-mic-fill'"></i>
                                     </button>
                                     <button class="btn btn-primary" type="submit"
                                         :disabled="isLoading || !userMessage.trim()">
