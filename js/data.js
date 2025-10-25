@@ -214,7 +214,7 @@ const periodicTableData = {
         "x": 1,
         "y": 3,
         "categoryClass": "alkali-metal",
-        "modelSrc": null,
+        "modelSrc": "https://storage.googleapis.com/search-ar-edu/periodic-table/element_010_neon/element_010_neon.glb",
         "atomicMass": "22.990",
         "density": 0.971,
         "meltingPoint": 370.944,
