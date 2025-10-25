@@ -1,35 +1,35 @@
 /*
- * ====================================================================
- * CHÚ THÍCH CẤU TRÚC DỮ LIỆU NGUYÊN TỐ
- * ====================================================================
- *
- * Mỗi nguyên tố trong đối tượng `periodicTableData` được định nghĩa
- * bằng Ký hiệu Hóa học (ví dụ: 'H', 'Fe', 'Au') làm "key".
- * Mỗi "key" trỏ đến một đối tượng (object) chứa các thuộc tính sau:
- *
- * - number: (Số) Số hiệu nguyên tử.
- * - symbol: (Chuỗi) Ký hiệu hóa học (ví dụ: "H").
- * - name: (Chuỗi) Tên tiếng Việt thông dụng (ví dụ: "Hydro", "Sắt").
- * - nameEN: (Chuỗi) Tên quốc tế/tiếng Anh (ví dụ: "Hydrogen", "Iron").
- * - summary: (Chuỗi) Một câu tóm tắt thú vị về nguyên tố, hiển thị trong sidebar.
- *
- * - x: (Số) Vị trí cột (grid-column) để hiển thị trên bảng tuần hoàn (từ 1 đến 18).
- * - y: (Số) Vị trí hàng (grid-row) để hiển thị trên bảng tuần hoàn (từ 1 đến 10).
- * - categoryClass: (Chuỗi) Tên lớp CSS dùng để định dạng màu sắc
- * (ví dụ: 'alkali-metal', 'noble-gas', 'unknown').
- *
- * - modelSrc: (Chuỗi/null) Đường dẫn (URL) đến tệp mô hình 3D (.glb).
- * Nếu là `null`, tab 3D sẽ hiển thị thông báo "không có".
- *
- * - atomicMass: (Chuỗi) Khối lượng nguyên tử, đơn vị (u).
- * (Lưu dưới dạng Chuỗi để giữ nguyên các số 0 ở cuối).
- * - density: (Số/null) Khối lượng riêng (g/cm³).
- * - meltingPoint: (Số/null) Điểm nóng chảy (đơn vị K - Kelvin).
- * - boilingPoint: (Số/null) Điểm sôi (đơn vị K - Kelvin).
- * - yearDiscovered: (Chuỗi) Năm phát hiện (ví dụ: "1766" hoặc "Cổ đại").
- *
- * ====================================================================
- */
+* ====================================================================
+* CHÚ THÍCH CẤU TRÚC DỮ LIỆU NGUYÊN TỐ
+* ====================================================================
+*
+* Mỗi nguyên tố trong đối tượng `periodicTableData` được định nghĩa
+* bằng Ký hiệu Hóa học (ví dụ: 'H', 'Fe', 'Au') làm "key".
+* Mỗi "key" trỏ đến một đối tượng (object) chứa các thuộc tính sau:
+*
+* - number: (Số) Số hiệu nguyên tử.
+* - symbol: (Chuỗi) Ký hiệu hóa học (ví dụ: "H").
+* - name: (Chuỗi) Tên tiếng Việt thông dụng (ví dụ: "Hydro", "Sắt").
+* - nameEN: (Chuỗi) Tên quốc tế/tiếng Anh (ví dụ: "Hydrogen", "Iron").
+* - summary: (Chuỗi) Một câu tóm tắt thú vị về nguyên tố, hiển thị trong sidebar.
+*
+* - x: (Số) Vị trí cột (grid-column) để hiển thị trên bảng tuần hoàn (từ 1 đến 18).
+* - y: (Số) Vị trí hàng (grid-row) để hiển thị trên bảng tuần hoàn (từ 1 đến 10).
+* - categoryClass: (Chuỗi) Tên lớp CSS dùng để định dạng màu sắc
+* (ví dụ: 'alkali-metal', 'noble-gas', 'unknown').
+*
+* - modelSrc: (Chuỗi/null) Đường dẫn (URL) đến tệp mô hình 3D (.glb).
+* Nếu là `null`, tab 3D sẽ hiển thị thông báo "không có".
+*
+* - atomicMass: (Chuỗi) Khối lượng nguyên tử, đơn vị (u).
+* (Lưu dưới dạng Chuỗi để giữ nguyên các số 0 ở cuối).
+* - density: (Số/null) Khối lượng riêng (g/cm³).
+* - meltingPoint: (Số/null) Điểm nóng chảy (đơn vị K - Kelvin).
+* - boilingPoint: (Số/null) Điểm sôi (đơn vị K - Kelvin).
+* - yearDiscovered: (Chuỗi) Năm phát hiện (ví dụ: "1766" hoặc "Cổ đại").
+*
+* ====================================================================
+*/
 
 // 'alkali-metal': 'Kim loại kiềm',
 // 'alkaline-earth-metal': 'Kim loại kiềm thổ',
@@ -38,11 +38,9 @@
 // 'metalloid': 'Á kim',
 // 'reactive-nonmetal': 'Phi kim', 
 // 'noble-gas': 'Khí hiếm',
-// 'lanthanide': 'Nhóm Lanthan',
-// 'actinide': 'Nhóm Actini',
+// 'lanthanide': 'Nhóm Lanthanides',
+// 'actinide': 'Nhóm Actinides',
 // 'unknown': 'Chưa rõ' 
-
-
 
 const periodicTableData = {
     "H": {
@@ -214,7 +212,7 @@ const periodicTableData = {
         "x": 1,
         "y": 3,
         "categoryClass": "alkali-metal",
-        "modelSrc": "https://storage.googleapis.com/search-ar-edu/periodic-table/element_010_neon/element_010_neon.glb",
+        "modelSrc": "https://storage.googleapis.com/search-ar-edu/periodic-table/element_011_sodium/element_011_sodium.glb",
         "atomicMass": "22.990",
         "density": 0.971,
         "meltingPoint": 370.944,
@@ -230,7 +228,7 @@ const periodicTableData = {
         "x": 2,
         "y": 3,
         "categoryClass": "alkaline-earth-metal",
-        "modelSrc": null,
+        "modelSrc": "https://storage.googleapis.com/search-ar-edu/periodic-table/element_012_magnesium/element_012_magnesium.glb",
         "atomicMass": "24.305",
         "density": 1.738,
         "meltingPoint": 923,
@@ -241,12 +239,12 @@ const periodicTableData = {
         "number": 13,
         "symbol": "Al",
         "name": "Nhôm",
-        "nameEN": "Aluminum",
+        "nameEN": "Aluminium",
         "summary": "Kim loại nhẹ, bền, phổ biến.",
         "x": 13,
         "y": 3,
         "categoryClass": "post-transition-metal",
-        "modelSrc": null,
+        "modelSrc": "https://storage.googleapis.com/search-ar-edu/periodic-table/element_013_aluminium/element_013_aluminium.glb",
         "atomicMass": "26.982",
         "density": 2.698,
         "meltingPoint": 933.47,
@@ -262,7 +260,7 @@ const periodicTableData = {
         "x": 14,
         "y": 3,
         "categoryClass": "metalloid",
-        "modelSrc": null,
+        "modelSrc": "https://storage.googleapis.com/search-ar-edu/periodic-table/element_014_silicon/element_014_silicon.glb",
         "atomicMass": "28.085",
         "density": 2.3296,
         "meltingPoint": 1687,
@@ -278,7 +276,7 @@ const periodicTableData = {
         "x": 15,
         "y": 3,
         "categoryClass": "reactive-nonmetal",
-        "modelSrc": null,
+        "modelSrc": "https://storage.googleapis.com/search-ar-edu/periodic-table/element_015_phosphorus/element_015_phosphorus.glb",
         "atomicMass": "30.974",
         "density": 1.82,
         "meltingPoint": 317.3,
@@ -294,7 +292,7 @@ const periodicTableData = {
         "x": 16,
         "y": 3,
         "categoryClass": "reactive-nonmetal",
-        "modelSrc": null,
+        "modelSrc": "https://storage.googleapis.com/search-ar-edu/periodic-table/element_016_sulfur/element_016_sulfur.glb",
         "atomicMass": "32.06",
         "density": 2.067,
         "meltingPoint": 388.36,
@@ -310,7 +308,7 @@ const periodicTableData = {
         "x": 17,
         "y": 3,
         "categoryClass": "reactive-nonmetal",
-        "modelSrc": null,
+        "modelSrc": "https://storage.googleapis.com/search-ar-edu/periodic-table/element_017_chlorine/element_017_chlorine.glb",
         "atomicMass": "35.45",
         "density": 0.003214,
         "meltingPoint": 171.6,
@@ -326,7 +324,7 @@ const periodicTableData = {
         "x": 18,
         "y": 3,
         "categoryClass": "noble-gas",
-        "modelSrc": null,
+        "modelSrc": "https://storage.googleapis.com/search-ar-edu/periodic-table/element_018_argon/element_018_argon.glb",
         "atomicMass": "39.948",
         "density": 0.0017837,
         "meltingPoint": 83.81,
@@ -342,7 +340,7 @@ const periodicTableData = {
         "x": 1,
         "y": 4,
         "categoryClass": "alkali-metal",
-        "modelSrc": null,
+        "modelSrc": "https://storage.googleapis.com/search-ar-edu/periodic-table/element_019_potassium/element_019_potassium.glb",
         "atomicMass": "39.098",
         "density": 0.862,
         "meltingPoint": 336.7,
@@ -358,7 +356,7 @@ const periodicTableData = {
         "x": 2,
         "y": 4,
         "categoryClass": "alkaline-earth-metal",
-        "modelSrc": null,
+        "modelSrc": "https://storage.googleapis.com/search-ar-edu/periodic-table/element_020_calcium/element_020_calcium.glb",
         "atomicMass": "40.078",
         "density": 1.54,
         "meltingPoint": 1115,
@@ -374,7 +372,7 @@ const periodicTableData = {
         "x": 3,
         "y": 4,
         "categoryClass": "transition-metal",
-        "modelSrc": null,
+        "modelSrc": "https://storage.googleapis.com/search-ar-edu/periodic-table/element_021_scandium/element_021_scandium.glb",
         "atomicMass": "44.956",
         "density": 2.989,
         "meltingPoint": 1814,
@@ -390,7 +388,7 @@ const periodicTableData = {
         "x": 4,
         "y": 4,
         "categoryClass": "transition-metal",
-        "modelSrc": null,
+        "modelSrc": "https://storage.googleapis.com/search-ar-edu/periodic-table/element_022_titanium/element_022_titanium.glb",
         "atomicMass": "47.867",
         "density": 4.54,
         "meltingPoint": 1941,
@@ -406,7 +404,7 @@ const periodicTableData = {
         "x": 5,
         "y": 4,
         "categoryClass": "transition-metal",
-        "modelSrc": null,
+        "modelSrc": "https://storage.googleapis.com/search-ar-edu/periodic-table/element_023_vanadium/element_023_vanadium.glb",
         "atomicMass": "50.942",
         "density": 6.11,
         "meltingPoint": 2183,
@@ -422,7 +420,7 @@ const periodicTableData = {
         "x": 6,
         "y": 4,
         "categoryClass": "transition-metal",
-        "modelSrc": null,
+        "modelSrc": "https://storage.googleapis.com/search-ar-edu/periodic-table/element_024_chromium/element_024_chromium.glb",
         "atomicMass": "51.996",
         "density": 7.15,
         "meltingPoint": 2180,
@@ -438,7 +436,7 @@ const periodicTableData = {
         "x": 7,
         "y": 4,
         "categoryClass": "transition-metal",
-        "modelSrc": null,
+        "modelSrc": "https://storage.googleapis.com/search-ar-edu/periodic-table/element_025_manganese/element_025_manganese.glb",
         "atomicMass": "54.938",
         "density": 7.44,
         "meltingPoint": 1519,
@@ -454,7 +452,7 @@ const periodicTableData = {
         "x": 8,
         "y": 4,
         "categoryClass": "transition-metal",
-        "modelSrc": null,
+        "modelSrc": "https://storage.googleapis.com/search-ar-edu/periodic-table/element_026_iron/element_026_iron.glb",
         "atomicMass": "55.845",
         "density": 7.874,
         "meltingPoint": 1811,
@@ -470,7 +468,7 @@ const periodicTableData = {
         "x": 9,
         "y": 4,
         "categoryClass": "transition-metal",
-        "modelSrc": null,
+        "modelSrc": "https://storage.googleapis.com/search-ar-edu/periodic-table/element_027_cobalt/element_027_cobalt.glb",
         "atomicMass": "58.933",
         "density": 8.86,
         "meltingPoint": 1768,
@@ -486,7 +484,7 @@ const periodicTableData = {
         "x": 10,
         "y": 4,
         "categoryClass": "transition-metal",
-        "modelSrc": null,
+        "modelSrc": "https://storage.googleapis.com/search-ar-edu/periodic-table/element_028_nickel/element_028_nickel.glb",
         "atomicMass": "58.693",
         "density": 8.912,
         "meltingPoint": 1728,
@@ -502,7 +500,7 @@ const periodicTableData = {
         "x": 11,
         "y": 4,
         "categoryClass": "transition-metal",
-        "modelSrc": null,
+        "modelSrc": "https://storage.googleapis.com/search-ar-edu/periodic-table/element_029_copper/element_029_copper.glb",
         "atomicMass": "63.546",
         "density": 8.96,
         "meltingPoint": 1357.77,
@@ -518,7 +516,7 @@ const periodicTableData = {
         "x": 12,
         "y": 4,
         "categoryClass": "transition-metal",
-        "modelSrc": null,
+        "modelSrc": "https://storage.googleapis.com/search-ar-edu/periodic-table/element_030_zinc/element_030_zinc.glb",
         "atomicMass": "65.38",
         "density": 7.134,
         "meltingPoint": 692.68,
@@ -534,7 +532,7 @@ const periodicTableData = {
         "x": 13,
         "y": 4,
         "categoryClass": "post-transition-metal",
-        "modelSrc": null,
+        "modelSrc": "https://storage.googleapis.com/search-ar-edu/periodic-table/element_031_gallium/element_031_gallium.glb",
         "atomicMass": "69.723",
         "density": 5.907,
         "meltingPoint": 302.9146,
@@ -550,7 +548,7 @@ const periodicTableData = {
         "x": 14,
         "y": 4,
         "categoryClass": "metalloid",
-        "modelSrc": null,
+        "modelSrc": "https://storage.googleapis.com/search-ar-edu/periodic-table/element_032_germanium/element_032_germanium.glb",
         "atomicMass": "72.630",
         "density": 5.323,
         "meltingPoint": 1211.4,
@@ -566,7 +564,7 @@ const periodicTableData = {
         "x": 15,
         "y": 4,
         "categoryClass": "metalloid",
-        "modelSrc": null,
+        "modelSrc": "https://storage.googleapis.com/search-ar-edu/periodic-table/element_033_arsenic/element_033_arsenic.glb",
         "atomicMass": "74.922",
         "density": 5.776,
         "meltingPoint": null,
@@ -582,7 +580,7 @@ const periodicTableData = {
         "x": 16,
         "y": 4,
         "categoryClass": "reactive-nonmetal",
-        "modelSrc": null,
+        "modelSrc": "https://storage.googleapis.com/search-ar-edu/periodic-table/element_034_selenium/element_034_selenium.glb",
         "atomicMass": "78.971",
         "density": 4.809,
         "meltingPoint": 494,
@@ -598,7 +596,7 @@ const periodicTableData = {
         "x": 17,
         "y": 4,
         "categoryClass": "reactive-nonmetal",
-        "modelSrc": null,
+        "modelSrc": "https://storage.googleapis.com/search-ar-edu/periodic-table/element_035_bromine/element_035_bromine.glb",
         "atomicMass": "79.904",
         "density": 3.122,
         "meltingPoint": 265.8,
