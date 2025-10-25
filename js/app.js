@@ -275,7 +275,7 @@ function periodicTableApp() {
                 throw new Error("API Key không hợp lệ.");
             }
 
-            const model = 'gemini-2.5-flash';
+            const model = 'gemini-2.0-flash-lite';
             const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
             const payload = {
