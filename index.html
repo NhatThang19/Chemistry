@@ -105,6 +105,10 @@
                                     <div class="legend-color-box actinide"></div>
                                     <span>Nhóm Actini</span>
                                 </div>
+                                <div class="legend-item">
+                                    <div class="legend-color-box unknown"></div>
+                                    <span>Không xác định</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -224,16 +228,16 @@
                                 <small class="text-muted">Gợi ý nhanh:</small>
                                 <div class="mt-2">
                                     <button class="btn btn-sm btn-outline-primary me-2 mb-2"
+                                        @click="sendQuickChatMessage('Nêu một số tính chất hóa học đặc trưng của ' + selectedElement.name + '?')">
+                                        Tính chất hoá học
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-primary me-2 mb-2"
                                         @click="sendQuickChatMessage('Ứng dụng của ' + selectedElement.name + ' trong đời sống?')">
                                         Ứng dụng
                                     </button>
-                                    <button class="btn btn-sm btn-outline-primary me-2 mb-2"
-                                        @click="sendQuickChatMessage('Viết 1 phương trình hóa học thú vị liên quan đến ' + selectedElement.name)">
-                                        Phương trình
-                                    </button>
                                     <button class="btn btn-sm btn-outline-primary mb-2"
-                                        @click="sendQuickChatMessage('So sánh ' + selectedElement.name + ' với nguyên tố ' + (periodicTableData[selectedElement.symbol === 'H' ? 'He' : 'H']).name + '?')">
-                                        So sánh
+                                        @click="sendQuickChatMessage('Làm thế nào để điều chế ' + selectedElement.name + '?')">
+                                        Điều chế
                                     </button>
                                 </div>
                             </div>
@@ -270,7 +274,7 @@
                                         <i class="bi"
                                             :class="isListening ? 'bi-mic-mute-fill text-danger' : 'bi-mic-fill'"></i>
                                     </button>
-                                    <button class="btn btn-primary" type="submit"
+                                    <button class="btn btn-outline-primary" type="submit"
                                         :disabled="isLoading || !userMessage.trim()">
                                         Gửi
                                     </button>
