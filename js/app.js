@@ -27,6 +27,10 @@ function periodicTableApp() {
         chatHistory: [],
         /** @type {string} Nội dung tin nhắn người dùng đang nhập. */
         userMessage: '',
+        /** @type {boolean} Cờ báo hiệu đang ghi âm giọng nói. */
+        isListening: false,
+        /** @type {object|null} Đối tượng SpeechRecognition. */
+        recognition: null,
 
         // General State
         /** @type {boolean} Cờ báo hiệu một tiến trình đang chạy (ví dụ: gọi API). */
@@ -46,9 +50,9 @@ function periodicTableApp() {
             this.quizFeedback = '';
             this.quizFeedbackSelectedIndex = null;
             document.body.classList.add('sidebar-open');
-            
+
             // Tải trước câu hỏi quiz ở chế độ nền
-            this.startQuiz(true); 
+            this.startQuiz(true);
         },
 
         /**
@@ -57,7 +61,7 @@ function periodicTableApp() {
         closeSidebar() {
             this.isSidebarOpen = false;
             document.body.classList.remove('sidebar-open');
-            
+
             // Đợi animation kết thúc rồi mới xóa dữ liệu để tránh giật
             setTimeout(() => {
                 this.selectedElement = null;
@@ -199,7 +203,7 @@ function periodicTableApp() {
         formatResponse(text) {
             if (window.marked && window.DOMPurify) {
                 const placeholders = [];
-                
+
                 // Tạm thời thay thế các khối KaTeX bằng placeholder để tránh bị Markdown xử lý.
                 let protectedText = text.replace(/(\$\$[\s\S]*?\$\$|\$[\s\S]*?\$)/g, (match) => {
                     const placeholder = `<!--KATEX_PLACEHOLDER_${placeholders.length}-->`;
@@ -270,7 +274,7 @@ function periodicTableApp() {
                 console.warn("API Key chưa được thiết lập. Vui lòng thêm API Key vào hàm callGeminiAPI.");
                 throw new Error("API Key không hợp lệ.");
             }
-            
+
             const model = 'gemini-2.5-flash';
             const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
@@ -326,6 +330,54 @@ function periodicTableApp() {
                 }
             }
             throw new Error("Không thể lấy phản hồi từ AI sau nhiều lần thử.");
+        },
+
+        /**
+         * Bật/tắt chức năng nhận dạng giọng nói.
+         */
+        toggleSpeechRecognition() {
+            if (this.isListening) {
+                this.recognition.stop();
+                return;
+            }
+
+            if (!this.recognition) {
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                if (!SpeechRecognition) {
+                    alert("Trình duyệt của bạn không hỗ trợ nhận dạng giọng nói. Vui lòng thử trên Chrome hoặc Edge.");
+                    return;
+                }
+                this.recognition = new SpeechRecognition();
+                this.recognition.lang = 'vi-VN';
+                this.recognition.interimResults = false;
+                this.recognition.maxAlternatives = 1;
+
+                this.recognition.onstart = () => {
+                    this.isListening = true;
+                };
+
+                this.recognition.onresult = (event) => {
+                    const speechResult = event.results[0][0].transcript;
+                    this.userMessage = speechResult;
+                    // Tự động gửi tin nhắn sau khi nhận dạng xong
+                    this.sendChatMessage();
+                };
+
+                this.recognition.onspeechend = () => {
+                    this.recognition.stop();
+                };
+
+                this.recognition.onend = () => {
+                    this.isListening = false;
+                };
+
+                this.recognition.onerror = (event) => {
+                    console.error("Lỗi nhận dạng giọng nói:", event.error);
+                    this.isListening = false;
+                };
+            }
+
+            this.recognition.start();
         },
 
         /**
