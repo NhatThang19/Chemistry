@@ -1,5 +1,4 @@
 :root {
-    /* Định nghĩa các biến màu cho các loại nguyên tố */
     --alkali-metal-bg: #ffe8cc;
     --alkali-metal-text: #854a00;
     --alkaline-earth-metal-bg: #fff0b3;
@@ -207,16 +206,13 @@ main.container-fluid {
     transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
-/* Responsive sidebar for smaller screens */
 @media (max-width: 768px) {
     body.sidebar-open {
         padding-right: 0;
-        /* No padding on small screens */
     }
 
     .offcanvas {
         width: 100%;
-        /* Full width on small screens */
     }
 }
 
@@ -271,7 +267,6 @@ main.container-fluid {
 }
 
 .chat-bubble-bot code {
-    /* Dành cho code inline `code` */
     background-color: rgba(0, 0, 0, 0.08);
     padding: 0.2em 0.4em;
     border-radius: 4px;
@@ -308,8 +303,6 @@ main.container-fluid {
 .chat-bubble-bot th {
     background-color: #f1f3f5;
 }
-
-/* --- Hết CSS cho Markdown --- */
 
 #chat-history {
     overflow-y: auto;
@@ -384,7 +377,6 @@ model-viewer {
     border-radius: 8px;
 }
 
-/* Thêm CSS để ẩn/hiện các tab view */
 .tab-content>div {
     display: none;
 }
@@ -416,7 +408,6 @@ body.sidebar-open .help-container {
     right: calc(var(--sidebar-width) + 20px);
 }
 
-/* On smaller screens, don't move the button */
 @media (max-width: 768px) {
     body.sidebar-open .help-container {
         right: 20px;

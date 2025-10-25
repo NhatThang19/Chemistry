@@ -1,28 +1,46 @@
+/**
+ * Khởi tạo và quản lý toàn bộ trạng thái và logic cho ứng dụng bảng tuần hoàn.
+ * @returns {object} Đối tượng Alpine.js với đầy đủ state và methods.
+ */
 function periodicTableApp() {
     return {
-        // --- Trạng thái (State) ---
+        // --- State ---
+        /** @type {Array<object>} Danh sách tất cả các nguyên tố. */
         elements: Object.values(periodicTableData),
+        /** @type {object|null} Nguyên tố đang được chọn để hiển thị chi tiết. */
         selectedElement: null,
-        currentView: 'chat', // 'summary', 'chat', 'quiz', '3d'
+        /** @type {string} View hiện tại trong sidebar ('summary', 'chat', 'quiz', '3d'). */
+        currentView: 'summary',
+        /** @type {boolean} Trạng thái đóng/mở của sidebar. */
         isSidebarOpen: false,
 
-        // Trạng thái Quiz
+        // Quiz State
+        /** @type {object|null} Đối tượng câu hỏi quiz hiện tại. */
         quizQuestion: null,
+        /** @type {string} Phản hồi cho câu trả lời quiz ('correct', 'incorrect', ''). */
         quizFeedback: '',
+        /** @type {number|null} Index của câu trả lời người dùng đã chọn. */
         quizFeedbackSelectedIndex: null,
 
-        // Trạng thái Chat
+        // Chat State
+        /** @type {Array<object>} Lịch sử cuộc trò chuyện với AI. */
         chatHistory: [],
+        /** @type {string} Nội dung tin nhắn người dùng đang nhập. */
         userMessage: '',
 
-        // Trạng thái chung
+        // General State
+        /** @type {boolean} Cờ báo hiệu một tiến trình đang chạy (ví dụ: gọi API). */
         isLoading: false,
 
-        // --- Hành động (Actions) ---
+        // --- Methods ---
+        /**
+         * Chọn một nguyên tố để hiển thị, mở sidebar và tải trước quiz.
+         * @param {string} symbol Ký hiệu của nguyên tố (ví dụ: 'H', 'O').
+         */
         selectElement(symbol) {
             this.selectedElement = periodicTableData[symbol];
             this.isSidebarOpen = true;
-            this.currentView = 'summary'; // Bắt đầu ở tab tóm tắt (summary)
+            this.currentView = 'summary';
             this.chatHistory = [];
             this.quizQuestion = null;
             this.quizFeedback = '';
@@ -33,21 +51,27 @@ function periodicTableApp() {
             this.startQuiz(true); 
         },
 
+        /**
+         * Đóng sidebar và xóa dữ liệu của nguyên tố đang chọn.
+         */
         closeSidebar() {
             this.isSidebarOpen = false;
             document.body.classList.remove('sidebar-open');
             
-            // Đợi 300ms (cho animation) rồi mới xóa dữ liệu
+            // Đợi animation kết thúc rồi mới xóa dữ liệu để tránh giật
             setTimeout(() => {
                 this.selectedElement = null;
             }, 300);
         },
 
+        /**
+         * Bắt đầu một phiên quiz mới bằng cách gọi API để tạo câu hỏi.
+         * @param {boolean} [isPreload=false] Nếu là true, quiz sẽ được tải nền mà không chuyển view.
+         */
         async startQuiz(isPreload = false) {
             if (!this.selectedElement) return;
 
             if (!isPreload) {
-                // Chỉ chuyển view nếu đây là hành động click, không phải preload
                 this.currentView = 'quiz';
             }
             this.isLoading = true;
@@ -55,7 +79,6 @@ function periodicTableApp() {
             this.quizFeedback = '';
             this.quizFeedbackSelectedIndex = null;
 
-            // Prompt đã được cải thiện
             const prompt = `Bạn là một AI tạo câu hỏi quiz. Hãy tạo 1 câu hỏi trắc nghiệm dạng JSON về nguyên tố: ${this.selectedElement.name} (Ký hiệu: ${this.selectedElement.symbol}, Số hiệu: ${this.selectedElement.number}).
                 Hãy đa dạng hóa loại câu hỏi: có thể hỏi về tính chất vật lý, tính chất hóa học, ứng dụng quan trọng, lịch sử phát hiện, hoặc một sự thật thú vị.
                 Câu hỏi có thể ở dạng "Cái nào sau đây là..." hoặc "Đâu KHÔNG phải là...".
@@ -71,14 +94,12 @@ function periodicTableApp() {
             try {
                 const jsonResponse = await this.callGeminiAPI(prompt, true);
                 this.quizQuestion = JSON.parse(jsonResponse);
-                // Render KaTeX cho câu hỏi và các lựa chọn
                 this.$nextTick(() => {
                     this.renderMath('quiz-pane');
                 });
             } catch (error) {
                 console.error("Lỗi tạo quiz:", error);
                 if (!isPreload) {
-                    // Nếu không phải preload, báo lỗi cho người dùng
                     this.currentView = 'chat';
                     this.chatHistory.push({ role: 'bot', text: 'Xin lỗi, tôi không thể tạo câu hỏi quiz ngay lúc này. Vui lòng thử lại sau.' });
                 }
@@ -87,6 +108,10 @@ function periodicTableApp() {
             }
         },
 
+        /**
+         * Kiểm tra câu trả lời của người dùng và cung cấp phản hồi.
+         * @param {number} selectedIndex Index của lựa chọn người dùng.
+         */
         checkAnswer(selectedIndex) {
             if (!this.quizQuestion || this.quizFeedback) return; // Không cho trả lời lại
 
@@ -97,15 +122,20 @@ function periodicTableApp() {
             } else {
                 this.quizFeedback = 'incorrect';
             }
-            
-            // Không cần renderMath ở đây
         },
 
+        /**
+         * Gửi một tin nhắn nhanh được định sẵn tới AI.
+         * @param {string} message Tin nhắn nhanh để gửi.
+         */
         sendQuickChatMessage(message) {
             this.userMessage = message;
             this.sendChatMessage();
         },
 
+        /**
+         * Gửi tin nhắn của người dùng đến API và hiển thị câu trả lời.
+         */
         async sendChatMessage() {
             if (!this.userMessage.trim() || !this.selectedElement) return;
 
@@ -116,7 +146,6 @@ function periodicTableApp() {
 
             this.$nextTick(() => this.scrollToChatBottom());
 
-            // Prompt đã được cải thiện
             const prompt = `Bạn là một chuyên gia hóa học vui tính và sâu sắc. 
                 Người dùng đang xem thông tin về nguyên tố: ${this.selectedElement.name} (Ký hiệu: ${this.selectedElement.symbol}, Số hiệu: ${this.selectedElement.number}).
                 Hãy trả lời câu hỏi của họ một cách chi tiết, dễ hiểu và thân thiện, liên hệ với các thông tin đã biết về nguyên tố này (nếu hợp lý). 
@@ -145,6 +174,11 @@ function periodicTableApp() {
             }
         },
 
+        /**
+         * Chuyển đổi các ký tự HTML đặc biệt để tránh XSS.
+         * @param {string} str Chuỗi đầu vào.
+         * @returns {string} Chuỗi đã được escape.
+         */
         escapeHTML(str) {
             return str.replace(/[&<>"']/g, function (m) {
                 return {
@@ -157,26 +191,26 @@ function periodicTableApp() {
             });
         },
 
-        // ==========================================================
-        // ===== THAY ĐỔI QUAN TRỌNG Ở ĐÂY =====
-        // ==========================================================
+        /**
+         * Định dạng phản hồi từ AI, xử lý Markdown và bảo vệ các biểu thức KaTeX.
+         * @param {string} text Văn bản thô từ API.
+         * @returns {string} Chuỗi HTML đã được định dạng và làm sạch.
+         */
         formatResponse(text) {
             if (window.marked && window.DOMPurify) {
                 const placeholders = [];
                 
-                // 1. "Ẩn" các khối KaTeX ($...$ và $$...$$) bằng một mã giữ chỗ (placeholder)
-                // THAY ĐỔI: Sử dụng <!-- ... --> làm placeholder để Markdown bỏ qua
+                // Tạm thời thay thế các khối KaTeX bằng placeholder để tránh bị Markdown xử lý.
                 let protectedText = text.replace(/(\$\$[\s\S]*?\$\$|\$[\s\S]*?\$)/g, (match) => {
                     const placeholder = `<!--KATEX_PLACEHOLDER_${placeholders.length}-->`;
-                    placeholders.push(match); // Lưu lại khối KaTeX gốc
+                    placeholders.push(match);
                     return placeholder;
                 });
 
-                // 2. Chạy Markdown và DOMPurify trên văn bản đã được "bảo vệ"
+                // Chuyển đổi Markdown sang HTML và làm sạch.
                 let html = window.DOMPurify.sanitize(window.marked.parse(protectedText));
 
-                // 3. Khôi phục lại các khối KaTeX nguyên bản vào đúng vị trí
-                // THAY ĐỔI: Regex tìm kiếm placeholder <!-- ... -->
+                // Khôi phục lại các khối KaTeX.
                 html = html.replace(/<!--KATEX_PLACEHOLDER_(\d+)-->/g, (match, index) => {
                     return placeholders[index];
                 });
@@ -184,17 +218,17 @@ function periodicTableApp() {
                 return html;
             }
 
-            // Fallback nếu thư viện chưa tải
+            // Fallback nếu thư viện chưa tải.
             return text
                 .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
                 .replace(/\*(.*?)\*/g, '<em>$1</em>')
                 .replace(/`([^`]+)`/g, '<code>$1</code>')
                 .replace(/\n/g, '<br>');
         },
-        // ==========================================================
-        // ===== KẾT THÚC THAY ĐỔI =====
-        // ==========================================================
 
+        /**
+         * Cuộn xuống cuối hộp chat.
+         */
         scrollToChatBottom() {
             const chatHistoryEl = document.getElementById('chat-history');
             if (chatHistoryEl) {
@@ -202,6 +236,10 @@ function periodicTableApp() {
             }
         },
 
+        /**
+         * Render các biểu thức toán học trong một element cụ thể bằng KaTeX.
+         * @param {string} elementId ID của element chứa nội dung cần render.
+         */
         renderMath(elementId) {
             if (window.renderMathInElement) {
                 const element = document.getElementById(elementId);
@@ -219,8 +257,14 @@ function periodicTableApp() {
             }
         },
 
+        /**
+         * Gọi API của Google Gemini để lấy phản hồi.
+         * @param {string} prompt Câu lệnh prompt để gửi đến AI.
+         * @param {boolean} [isJson=false] Nếu true, yêu cầu phản hồi dưới dạng JSON.
+         * @returns {Promise<string>} Phản hồi dạng text từ AI.
+         */
         async callGeminiAPI(prompt, isJson = false) {
-            const apiKey = "AIzaSyASinlV_JaAKD1IZfnO9uiy5yES36HI_cY"; // API Key của bạn
+            const apiKey = "AIzaSyASinlV_JaAKD1IZfnO9uiy5yES36HI_cY";
 
             if (apiKey === "") {
                 console.warn("API Key chưa được thiết lập. Vui lòng thêm API Key vào hàm callGeminiAPI.");
@@ -262,8 +306,7 @@ function periodicTableApp() {
                     const result = await response.json();
 
                     if (result.candidates && result.candidates.length > 0 && result.candidates[0].content.parts[0].text) {
-                        const text = result.candidates[0].content.parts[0].text;
-                        return text;
+                        return result.candidates[0].content.parts[0].text;
                     }
 
                     if (result.candidates && result.candidates.length > 0 && result.candidates[0].finishReason === "SAFETY") {
@@ -285,6 +328,9 @@ function periodicTableApp() {
             throw new Error("Không thể lấy phản hồi từ AI sau nhiều lần thử.");
         },
 
+        /**
+         * Hàm khởi tạo, được gọi khi component được tải.
+         */
         init() {
             if (window.marked) {
                 window.marked.setOptions({
