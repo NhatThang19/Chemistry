@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bảng Tuần Hoàn Hóa Học</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- KaTeX CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.css">
+    <!-- Local CSS -->
+    <link rel="stylesheet" href="css/styles.css">
+
+    <!-- Alpine.js -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <!-- Marked.js (for Markdown) -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- DOMPurify (for security) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.5/purify.min.js"
+        integrity="sha512-JatFEe90fJU2nrgf27fUz2hWRvdYrSlTEV8esFuqCtfiqWN8phkS1fUl/xCfYyrLDQcNf3YyS0V9hG7U4RHNmQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <!-- KaTeX JS -->
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js"
+        integrity="sha384-hIoBPJpTUs74ddyc4bFZSM1TVlQDA60VBbJS0oA934VSz82sBx1X7kSx2ATBDIyd"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js"
+        integrity="sha384-43gviWU0YVjaDtb/GhzOouOXtZMP/7XUzwPTstBeZFe/+rCMvRwr4yROQP43s0Xk"
+        crossorigin="anonymous"></script>
+    <!-- Google Model Viewer -->
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
+</head>
+
+<body>
+    <div x-data="periodicTableApp()" x-init="init()">
+        <!-- Header -->
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top shadow-sm">
+            <div class="container-fluid d-flex justify-content-center">
+                <span class="navbar-brand me-0 fw-bold">Bảng Tuần Hoàn Hóa Học Tương Tác</span>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="container-fluid mt-4">
+            <div class="periodic-table-container">
+                <div class="periodic-table-grid">
+                    <template x-for="element in elements" :key="element.symbol">
+                        <div class="element-card" :style="`grid-column: ${element.x}; grid-row: ${element.y};`"
+                            :class="element.categoryClass" @click="selectElement(element.symbol)">
+                            <div class="element-number" x-text="element.number"></div>
+                            <div class="element-symbol" x-text="element.symbol"></div>
+                            <div class="element-name" x-text="element.name"></div>
+                        </div>
+                    </template>
+                </div>
+            </div>
+
+            <!-- Legend -->
+            <div class="row mt-4 mb-3">
+                <div class="col-12">
+                    <div class="card legend-card p-3">
+                        <div class="card-body p-2">
+                            <h6 class="card-title text-center mb-3">Chú thích các loại nguyên tố</h6>
+                            <div class="d-flex flex-wrap justify-content-center gap-3">
+                                <div class="legend-item">
+                                    <div class="legend-color-box alkali-metal"></div>
+                                    <span>Kim loại kiềm</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color-box alkaline-earth-metal"></div>
+                                    <span>Kim loại kiềm thổ</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color-box transition-metal"></div>
+                                    <span>Kim loại chuyển tiếp</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color-box post-transition-metal"></div>
+                                    <span>Kim loại sau chuyển tiếp</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color-box metalloid"></div>
+                                    <span>Á kim</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color-box reactive-nonmetal"></div>
+                                    <span>Phi kim</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color-box noble-gas"></div>
+                                    <span>Khí hiếm</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color-box lanthanide"></div>
+                                    <span>Nhóm Lanthan</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color-box actinide"></div>
+                                    <span>Nhóm Actini</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Sidebar Offcanvas -->
+        <div class="offcanvas offcanvas-end" tabindex="-1" id="elementSidebar" :class="{'show': isSidebarOpen}"
+            style="visibility: hidden;" :style="isSidebarOpen && { visibility: 'visible' }"
+            x-transition:enter="transition ease-out duration-300" x-transition:enter-start="transform translate-x-full"
+            x-transition:enter-end="transform translate-x-0" x-transition:leave="transition ease-in duration-300"
+            x-transition:leave-start="transform translate-x-0" x-transition:leave-end="transform translate-x-full">
+
+            <div class="offcanvas-header border-bottom" x-if="selectedElement">
+                <h5 class="offcanvas-title fw-bold" x-text="selectedElement.name"></h5>
+                <button type="button" class="btn-close" @click="closeSidebar()"></button>
+            </div>
+
+            <div class="offcanvas-body d-flex flex-column" x-if="selectedElement">
+                <!-- Tabs -->
+                <div class="mb-3">
+                    <ul class="nav nav-tabs nav-fill" id="elementTab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link fw-medium" :class="{'active': currentView === 'summary'}"
+                                @click="currentView = 'summary'" id="summary-tab" data-bs-toggle="tab"
+                                data-bs-target="#summary-pane" type="button" role="tab" aria-controls="summary-pane"
+                                aria-selected="true">
+                                Thông tin
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link fw-medium" :class="{'active': currentView === '3d'}"
+                                @click="currentView = '3d'" id="3d-tab" data-bs-toggle="tab" data-bs-target="#3d-pane"
+                                type="button" role="tab" aria-controls="3d-pane" aria-selected="false">
+                                Mô hình 3D
+                            </button>
+                        </li>
+                    </ul>
+                    <ul class="nav nav-tabs nav-fill" id="elementTab2" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link fw-medium" :class="{'active': currentView === 'chat'}"
+                                @click="currentView = 'chat'" id="chat-tab" data-bs-toggle="tab"
+                                data-bs-target="#chat-pane" type="button" role="tab" aria-controls="chat-pane"
+                                aria-selected="false">
+                                Hỏi Đáp AI
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link fw-medium" :class="{'active': currentView === 'quiz'}"
+                                @click="currentView = 'quiz'; renderMath('quiz-pane');" id="quiz-tab"
+                                data-bs-toggle="tab" data-bs-target="#quiz-pane" type="button" role="tab"
+                                aria-controls="quiz-pane" aria-selected="false">
+                                Làm Quiz
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Tab Content -->
+                <div class="tab-content flex-grow-1" id="elementTabContent" style="min-height: 0; overflow-y: auto;">
+                    <!-- Summary View -->
+                    <div class="tab-pane fade" :class="{'show active': currentView === 'summary'}" id="summary-pane"
+                        role="tabpanel" aria-labelledby="summary-tab" tabindex="0">
+                        <div>
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <strong>Tên nguyên tố</strong>
+                                    <span x-text="selectedElement.name" class="text-end"></span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <strong>Ký hiệu</strong>
+                                    <span x-text="selectedElement.symbol" class="text-end"></span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <strong>Số hiệu</strong>
+                                    <span x-text="selectedElement.number" class="text-end"></span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <strong>Khối lượng nguyên tử</strong>
+                                    <span x-text="selectedElement.atomicMass" class="text-end"></span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <strong>Tên quốc tế</strong>
+                                    <span x-text="selectedElement.nameEN" class="text-end"></span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <strong>Khối lượng riêng</strong>
+                                    <span x-text="selectedElement.density + ' g/cm³'" class="text-end"></span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <strong>Điểm nóng chảy</strong>
+                                    <span x-text="selectedElement.meltingPoint + ' K'" class="text-end"></span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <strong>Điểm sôi</strong>
+                                    <span x-text="selectedElement.boilingPoint + ' K'" class="text-end"></span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <strong>Năm phát hiện</strong>
+                                    <span x-text="selectedElement.yearDiscovered" class="text-end"></span>
+                                </li>
+                                <li class="list-group-item">
+                                    <strong>Tóm tắt</strong>
+                                    <p x-text="selectedElement.summary" class="mt-2 mb-0 fst-italic"></p>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Chat View -->
+                    <div class="tab-pane fade" :class="{'show active': currentView === 'chat'}" id="chat-pane"
+                        role="tabpanel" aria-labelledby="chat-tab" tabindex="0">
+                        <div class="d-flex flex-column h-100">
+                            <!-- Quick Chat Buttons -->
+                            <div class="mb-3">
+                                <small class="text-muted">Gợi ý nhanh:</small>
+                                <div class="mt-2">
+                                    <button class="btn btn-sm btn-outline-primary me-2 mb-2"
+                                        @click="sendQuickChatMessage('Ứng dụng của ' + selectedElement.name + ' trong đời sống?')">
+                                        Ứng dụng
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-primary me-2 mb-2"
+                                        @click="sendQuickChatMessage('Viết 1 phương trình hóa học thú vị liên quan đến ' + selectedElement.name)">
+                                        Phương trình
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-primary mb-2"
+                                        @click="sendQuickChatMessage('So sánh ' + selectedElement.name + ' với nguyên tố ' + (periodicTableData[selectedElement.symbol === 'H' ? 'He' : 'H']).name + '?')">
+                                        So sánh
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Chat History -->
+                            <div id="chat-history" class="mb-3 d-flex flex-column flex-grow-1">
+                                <template x-for="(message, index) in chatHistory" :key="index">
+                                    <div class="d-flex mb-2" :class="{'justify-content-end': message.role === 'user'}">
+                                        <div :class="message.role === 'user' ? 'chat-bubble-user' : 'chat-bubble-bot'"
+                                            x-html="message.text"></div>
+                                    </div>
+                                </template>
+                                <!-- Typing indicator -->
+                                <template x-if="isLoading && currentView === 'chat'">
+                                    <div class="d-flex mb-2">
+                                        <div class="chat-bubble-bot">
+                                            <div class="spinner-border spinner-border-sm" role="status">
+                                                <span class="visually-hidden">Đang gõ...</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+
+                            <!-- Chat Form -->
+                            <form @submit.prevent="sendChatMessage()" class="mt-auto">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" placeholder="Hỏi AI về nguyên tố này..."
+                                        x-model="userMessage" :disabled="isLoading">
+                                    <button class="btn btn-primary" type="submit"
+                                        :disabled="isLoading || !userMessage.trim()">
+                                        Gửi
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Quiz View -->
+                    <div class="tab-pane fade" :class="{'show active': currentView === 'quiz'}" id="quiz-pane"
+                        role="tabpanel" aria-labelledby="quiz-tab" tabindex="0">
+                        <template x-if="isLoading && !quizQuestion">
+                            <div class="d-flex justify-content-center align-items-center" style="height: 300px;">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Đang tải...</span>
+                                </div>
+                            </div>
+                        </template>
+
+                        <!-- Hiển thị câu hỏi KHI ĐÃ CÓ -->
+                        <template x-if="quizQuestion">
+                            <div>
+                                <h6 x-html="quizQuestion.questionText" class="mb-3 fw-bold"></h6>
+
+                                <div class="mb-3">
+                                    <template x-for="(option, index) in quizQuestion.options" :key="index">
+                                        <div class="quiz-option" :class="{
+                                            'correct': quizFeedback === 'correct' && index === quizQuestion.correctAnswerIndex,
+                                            'incorrect': quizFeedback === 'incorrect' && index === quizFeedbackSelectedIndex,
+                                            'disabled': quizFeedback !== '' /* Vô hiệu hóa khi đã trả lời */
+                                        }" @click="checkAnswer(index)">
+                                            <span x-html="String.fromCharCode(65 + index) + '. ' + option"></span>
+                                        </div>
+                                    </template>
+                                </div>
+
+                                <template x-if="quizFeedback">
+                                    <div class="alert"
+                                        :class="quizFeedback === 'correct' ? 'alert-success' : 'alert-danger'"
+                                        x-html="quizFeedback === 'correct' ? '<strong>Chính xác!</strong> Xin chúc mừng!' : '<strong>Chưa chính xác.</strong> Đáp án đúng là ' + String.fromCharCode(65 + quizQuestion.correctAnswerIndex) + '.'">
+                                    </div>
+                                </template>
+
+                                <button class="btn btn-primary w-100" @click="startQuiz()" :disabled="isLoading">
+                                    <span x-show="!isLoading">Tạo câu hỏi mới</span>
+                                    <span x-show="isLoading" class="spinner-border spinner-border-sm" role="status"
+                                        aria-hidden="true"></span>
+                                </button>
+                            </div>
+                        </template>
+                    </div>
+
+                    <!-- 3D Model View -->
+                    <div class="tab-pane fade text-center" :class="{'show active': currentView === '3d'}" id="3d-pane"
+                        role="tabpanel" aria-labelledby="3d-tab" tabindex="0">
+                        <template x-if="selectedElement && selectedElement.modelSrc">
+                            <model-viewer :src="selectedElement.modelSrc" ar camera-controls auto-rotate autoplay
+                                shadow-intensity="1"></model-viewer>
+                        </template>
+                        <template x-if="selectedElement && !selectedElement.modelSrc">
+                            <div class="alert alert-info mt-3" role="alert">
+                                Rất tiếc, hiện tại chưa có mô hình 3D cho nguyên tố này.
+                            </div>
+                        </template>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Help Button and Modal -->
+    <div class="help-container">
+        <button class="help-fab btn btn-primary" data-bs-toggle="modal" data-bs-target="#helpModal"
+            title="Hướng dẫn sử dụng">
+            <i class="bi bi-book"></i>
+        </button>
+    </div>
+
+    <div class="modal fade" id="helpModal" tabindex="-1" aria-labelledby="helpModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="helpModalLabel">Hướng Dẫn Sử Dụng</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Chào mừng bạn đến với Bảng Tuần Hoàn Hóa Học Tương Tác!</p>
+                    <ul>
+                        <li><strong>Khám phá nguyên tố:</strong> Nhấp vào bất kỳ ô nguyên tố nào trên bảng tuần hoàn để
+                            mở thanh thông tin chi tiết.</li>
+                        <li><strong>Thông tin chi tiết:</strong> Xem các thông tin cơ bản như tên, ký hiệu, khối lượng
+                            nguyên tử, và nhiều hơn nữa trong tab "Thông tin".</li>
+                        <li><strong>Mô hình 3D:</strong> Chuyển sang tab "Mô hình 3D" để xem cấu trúc nguyên tử trực
+                            quan (nếu có).</li>
+                        <li><strong>Hỏi Đáp AI:</strong> Có câu hỏi? Tab "Hỏi Đáp AI" cho phép bạn trò chuyện với trợ lý
+                            ảo về nguyên tố đang chọn.</li>
+                        <li><strong>Làm Quiz:</strong> Kiểm tra kiến thức của bạn với các câu hỏi trắc nghiệm vui trong
+                            tab "Làm Quiz".</li>
+                    </ul>
+                    <p>Chúc bạn có những trải nghiệm học tập thú vị!</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đã hiểu</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer mt-auto py-3 bg-dark text-white">
+        <div class="container text-center">
+            Copyright by Thorfinn19 Dev (～￣▽￣)～
+        </div>
+    </footer>
+
+    <!-- Local Scripts -->
+    <script src="js/data.js"></script>
+    <script src="js/app.js"></script>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
