@@ -84,16 +84,21 @@ function periodicTableApp() {
             this.quizFeedbackSelectedIndex = null;
 
             const prompt = `Bạn là một AI tạo câu hỏi quiz. Hãy tạo 1 câu hỏi trắc nghiệm dạng JSON về nguyên tố: ${this.selectedElement.name} (Ký hiệu: ${this.selectedElement.symbol}, Số hiệu: ${this.selectedElement.number}).
-                Hãy đa dạng hóa loại câu hỏi: có thể hỏi về tính chất vật lý, tính chất hóa học, ứng dụng quan trọng, lịch sử phát hiện, hoặc một sự thật thú vị.
-                Câu hỏi có thể ở dạng "Cái nào sau đây là..." hoặc "Đâu KHÔNG phải là...".
-                Sử dụng KaTeX cho công thức hóa học nếu cần (ví dụ: $H_2O$).
-                JSON phải có cấu trúc: 
-                { 
-                  "questionText": "Nội dung câu hỏi...", 
-                  "options": ["Đáp án A", "Đáp án B", "Đáp án C", "Đáp án D"], 
-                  "correctAnswerIndex": [số từ 0-3] 
+                Hãy đa dạng hóa loại câu hỏi: cấu tạo nguyên tử, hạt proton, neutron, electron, hiểu biết về nguyên tố hóa học: kí hiệu, số hiệu nguyên tử, khối lượng nguyên tử, bảng tuần hoàn: ô, chu kì, nhóm, quy luật sự biến đổi tính chất trong chu kì và nhóm, tính chất vật lý, tính chất hóa học, ứng dụng, điều chế, lịch sử phát hiện, hoặc một câu chuyện thú vị về nguyên tố.
+                Hãy đa dạng hóa câu hỏi:
+                - “Cái nào sau đây đúng/sai về...?”
+                - “Nguyên tử của nguyên tố X có đặc điểm nào sau đây?”
+                - “Vì sao nguyên tố X được xếp vào nhóm Y?”
+                - “Đâu KHÔNG phải là đặc điểm của...?”
+                Nếu cần, dùng KaTeX để biểu diễn công thức (ví dụ: $H_2O$, $2H_2 + O_2 \rightarrow 2H_2O$).  
+
+                Kết quả **chỉ được trả về ở dạng JSON**, có cấu trúc:
+                {
+                "questionText": "Nội dung câu hỏi...",
+                "options": ["Đáp án A", "Đáp án B", "Đáp án C", "Đáp án D"],
+                "correctAnswerIndex": [số từ 0-3]
                 }
-                Chỉ trả về duy nhất chuỗi JSON, không có giải thích hay markdown.`;
+                Không thêm giải thích hoặc ký hiệu Markdown.`;
 
             try {
                 const jsonResponse = await this.callGeminiAPI(prompt, true);
@@ -150,17 +155,19 @@ function periodicTableApp() {
 
             this.$nextTick(() => this.scrollToChatBottom());
 
-            const prompt = `Bạn là một chuyên gia hóa học vui tính và sâu sắc. 
-                Người dùng đang xem thông tin về nguyên tố: ${this.selectedElement.name} (Ký hiệu: ${this.selectedElement.symbol}, Số hiệu: ${this.selectedElement.number}).
-                Hãy trả lời câu hỏi của họ một cách chi tiết, dễ hiểu và thân thiện, liên hệ với các thông tin đã biết về nguyên tố này (nếu hợp lý). 
-                Sử dụng markdown cho định dạng (ví dụ: **đậm**, *nghiêng*) và KaTeX cho công thức hóa học (ví dụ: $H_2O$, $2H_2 + O_2 \rightarrow 2H_2O$).
-                Câu hỏi của người dùng: "${msg}"
-                
-                Hướng dẫn trả lời:
-                - Nếu họ hỏi về "ứng dụng" hay "điều chế", hãy tập trung vào đó.
-                - Nếu họ hỏi "phương trình", hãy cung cấp một phương trình và giải thích.
-                - Nếu họ hỏi "so sánh", hãy so sánh rõ ràng.
-                - Hãy giữ câu trả lời tập trung vào hóa học và giáo dục.`;
+            const prompt = `--- VAI TRÒ: Bạn là một chuyên gia hóa học vui tính, cực kỳ chi tiết và **TUÂN THỦ TUYỆT ĐỐI** định dạng.
+
+            BỐI CẢNH: Người dùng đang xem thông tin về nguyên tố: ${this.selectedElement.name} (Ký hiệu: ${this.selectedElement.symbol}, Số hiệu: ${this.selectedElement.number}). Câu hỏi của người dùng: "${msg}"
+
+            QUY TẮC BẮT BUỘC (PHẢI LÀM THEO):
+
+            1. **ƯU TIÊN SỐ 1 - ĐỊNH DẠNG KATEX:** * **TẤT CẢ** các công thức hóa học, ký hiệu nguyên tố (ví dụ $Fe$, $O_2$), phương trình đầy đủ, ion ($Fe^{3+}$), và các con số liên quan đến hóa học (như số oxi hóa, số mol) BẮT BUỘC phải được bọc trong KaTeX. * Ví dụ đúng: $H_2O$, $2H_2 + O_2 \rightarrow 2H_2O$. * Ví dụ sai (CẤM DÙNG): H2O, 2H2 + O2 -> 2H2O. * **KHÔNG ĐƯỢC LƯỜI:** Kể cả khi câu hỏi RẤT đơn giản (ví dụ "Nước là gì?"), bạn vẫn PHẢI trả lời là "$H_2O$" chứ không phải "H2O". Đây là quy tắc quan trọng nhất.
+
+            2. **XỬ LÝ PHẢN ỨNG PHỨC TẠP (Ví dụ: Fe + O2):** * Nếu một phản ứng có nhiều trường hợp (ví dụ: $Fe + O_2$ có thể ra $FeO$, $Fe_3O_4$, hoặc $Fe_2O_3$), bạn PHẢI: a. Trình bày trường hợp phổ biến nhất TRƯỚC TIÊN, và dùng KaTeX cho nó. b. Liệt kê các trường hợp khác (kèm điều kiện nếu có) và cũng dùng KaTeX cho chúng. * Tuyệt đối không được dùng sự đa nghĩa làm lý do để *tránh* dùng KaTeX.
+
+            3. **PHONG CÁCH CHUNG:** * Trả lời chi tiết, dễ hiểu, thân thiện, và sâu sắc. * Liên hệ với nguyên tố đang xem (${this.selectedElement.name}) nếu hợp lý. * Sử dụng markdown (ví dụ: **đậm**, *nghiêng*, ## Tiêu đề) để câu trả lời rõ ràng, dễ đọc.
+
+            NHIỆM VỤ: Hãy trả lời câu hỏi của người dùng theo các quy tắc trên. ---`;
 
             try {
                 const aiResponse = await this.callGeminiAPI(prompt);
@@ -275,7 +282,7 @@ function periodicTableApp() {
                 throw new Error("API Key không hợp lệ.");
             }
 
-            const model = 'gemini-2.0-flash-lite';
+            const model = 'gemini-2.5-flash-lite';
             const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
             const payload = {

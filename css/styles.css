@@ -19,7 +19,7 @@
     --actinide-text: #C73200;
     --unknown-bg: #e0e0e0;
     --unknown-text: #333333;
-    --sidebar-width: 400px;
+    --sidebar-width: 500px;
 }
 
 @keyframes fadeIn {
@@ -44,7 +44,12 @@ body {
 }
 
 body.sidebar-open {
-    padding-right: var(--sidebar-width);
+    padding-right: var(--sidebar-width) !important;
+}
+
+.offcanvas.offcanvas-end {
+    width: var(--sidebar-width);
+    font-size: 18px;
 }
 
 main.container-fluid {
